@@ -24,7 +24,7 @@ namespace FeroTech.Web.Controllers
         public IActionResult Create()
         {
             return View();
-            //vhfhjfh
+            
         }
 
         [HttpPost]
