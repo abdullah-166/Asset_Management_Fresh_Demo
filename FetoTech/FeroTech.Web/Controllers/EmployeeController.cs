@@ -33,7 +33,7 @@ namespace FeroTech.Web.Controllers
             {
                 await _rep.Create(model);
             }
-            return RedirectToAction("Create");
+            return RedirectToAction("Create"); //Comment to check Github Actions
         }
 
         public async Task<IActionResult> Index()
