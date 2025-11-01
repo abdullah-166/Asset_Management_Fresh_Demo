@@ -16,6 +16,7 @@ namespace FeroTech.Web.Controllers
             _context = context;
             _rep = rep;
         }
+        
         public IActionResult Create()
         {
             return View();
