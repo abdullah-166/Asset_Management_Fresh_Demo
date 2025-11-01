@@ -1,4 +1,5 @@
-﻿using FeroTech.Infrastructure.Application.Interfaces;
+﻿using FeroTech.Infrastructure.Application.DTOs;
+using FeroTech.Infrastructure.Application.Interfaces;
 using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -42,8 +43,6 @@ namespace FeroTech.Infrastructure.Repositories
             };
             _context.Employees.Add(assets);
             await _context.SaveChangesAsync();
-
-            //ssss
         }
         
 
@@ -59,5 +58,6 @@ namespace FeroTech.Infrastructure.Repositories
             if (product != null) _context.DistributedAssets.Remove(product);
             await _context.SaveChangesAsync();
         }
+
     }
 }

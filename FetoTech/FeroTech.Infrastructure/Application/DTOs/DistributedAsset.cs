@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FeroTech.Infrastructure.Application.DTOs
 {
-    public class DistributedAsset
+    public class DistributedAssetDto
     {
         public Guid DistributedId { get; set; }
         public int AssetId { get; set; }

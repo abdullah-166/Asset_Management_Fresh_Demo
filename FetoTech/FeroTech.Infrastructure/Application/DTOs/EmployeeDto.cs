@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FeroTech.Infrastructure.Application.DTOs
 {
-    public class Employee
+    public class EmployeeDto
     {
         public Guid EmployeeId { get; set; }
 

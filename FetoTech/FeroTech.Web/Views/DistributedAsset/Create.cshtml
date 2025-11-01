@@ -1,0 +1,87 @@
+﻿@model FeroTech.Infrastructure.Application.DTOs.DistributedAssetDto
+
+@{
+    ViewData["Title"] = "Assign Asset";
+}
+
+<h2>Assign Asset</h2>
+<hr />
+
+<form asp-action="Create" method="post" class="row g-3">
+
+    <!-- Asset Dropdown -->
+    <div class="col-md-6">
+        <label asp-for="AssetId" class="form-label">Select Asset</label>
+        <select asp-for="AssetId" class="form-select"
+                asp-items="@(new SelectList(ViewBag.AvailableAssets, "AssetId", "Name"))">
+            <option value="">-- Select Available Asset --</option>
+        </select>
+        <span asp-validation-for="AssetId" class="text-danger"></span>
+    </div>
+
+    <!-- Assigned User Dropdown -->
+    <div class="col-md-6">
+        <label asp-for="AssignedToUserId" class="form-label">Assign To Employee</label>
+        <select asp-for="AssignedToUserId" class="form-select"
+                asp-items="@(new SelectList(ViewBag.ActiveEmployees, "EmployeeId", "FullName"))">
+            <option value="">-- Select Employee --</option>
+        </select>
+        <span asp-validation-for="AssignedToUserId" class="text-danger"></span>
+    </div>
+
+    <!-- Assigned At -->
+    <div class="col-md-6">
+        <label asp-for="AssignedAt" class="form-label">Assigned Date</label>
+        <input asp-for="AssignedAt" type="date" class="form-control" />
+        <span asp-validation-for="AssignedAt" class="text-danger"></span>
+    </div>
+
+    <!-- QR Code Value -->
+    <div class="col-md-6">
+        <label asp-for="QRCodeValue" class="form-label">QR Code Value</label>
+        <input asp-for="QRCodeValue" class="form-control" />
+        <span asp-validation-for="QRCodeValue" class="text-danger"></span>
+    </div>
+
+    <!-- Warranty -->
+    <div class="col-md-6">
+        <label asp-for="WarrantyEndDate" class="form-label">Warranty End Date</label>
+        <input asp-for="WarrantyEndDate" type="date" class="form-control" />
+        <span asp-validation-for="WarrantyEndDate" class="text-danger"></span>
+    </div>
+
+    <!-- Status -->
+    <div class="col-md-6">
+        <label asp-for="Status" class="form-label">Status</label>
+        <select asp-for="Status" class="form-select">
+            <option value="Available">Available</option>
+            <option value="Assigned">Assigned</option>
+            <option value="Returned">Returned</option>
+        </select>
+        <span asp-validation-for="Status" class="text-danger"></span>
+    </div>
+
+    <!-- Notes -->
+    <div class="col-md-12">
+        <label asp-for="Notes" class="form-label">Notes</label>
+        <textarea asp-for="Notes" class="form-control"></textarea>
+        <span asp-validation-for="Notes" class="text-danger"></span>
+    </div>
+
+    <!-- Active Checkbox -->
+    <div class="col-md-6 form-check">
+        <input asp-for="IsActive" class="form-check-input" type="checkbox" checked />
+        <label asp-for="IsActive" class="form-check-label">Is Active</label>
+    </div>
+
+    <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+    </div>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

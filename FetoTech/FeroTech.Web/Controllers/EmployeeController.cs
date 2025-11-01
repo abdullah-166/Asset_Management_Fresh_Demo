@@ -1,4 +1,5 @@
-﻿using FeroTech.Infrastructure.Application.Interfaces;
+﻿using FeroTech.Infrastructure.Application.DTOs;
+using FeroTech.Infrastructure.Application.Interfaces;
 using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
 using FeroTech.Infrastructure.Repositories;
@@ -32,7 +33,7 @@ namespace FeroTech.Web.Controllers
             {
                 await _rep.Create(model);
             }
-            return RedirectToAction("Create"); //Comment to check Github Actions
+            return RedirectToAction("Create"); 
         }
 
         public async Task<IActionResult> Index()

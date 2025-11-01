@@ -21,7 +21,7 @@ builder.Services.AddControllersWithViews();
 
 // DI for Repository + Service
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
-
+builder.Services.AddScoped<IDistributedAssetRepository, DistributedAssetRepository>();
 
 var app = builder.Build();
 
