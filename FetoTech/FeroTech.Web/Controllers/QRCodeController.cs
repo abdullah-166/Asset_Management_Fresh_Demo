@@ -25,7 +25,7 @@ namespace FeroTech.Web.Controllers
 
         // POST: QRCode/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+      
         public async Task<IActionResult> Create(QRCode model)
         {
             if (ModelState.IsValid)
@@ -86,7 +86,7 @@ namespace FeroTech.Web.Controllers
 
         // POST: QRCode/Delete/{id}
         [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
+        
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             var qrCode = await _context.QRCodes.FindAsync(id);

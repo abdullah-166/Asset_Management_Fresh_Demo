@@ -42,6 +42,8 @@ namespace FeroTech.Infrastructure.Repositories
             };
             _context.Employees.Add(assets);
             await _context.SaveChangesAsync();
+
+            //ssss
         }
         
 
