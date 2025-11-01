@@ -1,5 +1,7 @@
-﻿using FeroTech.Infrastructure.Data;
+﻿using FeroTech.Infrastructure.Application.Interfaces;
+using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
+using FeroTech.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -11,10 +13,12 @@ namespace FeroTech.Web.Controllers
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
-
-        public EmployeeController(ApplicationDbContext context)
+        private readonly IEmployeeRepository _rep;  
+        public EmployeeController(ApplicationDbContext context, 
+            IEmployeeRepository rep)
         {
             _context = context;
+            _rep = rep;
         }
 
         public IActionResult Create()
@@ -23,29 +27,13 @@ namespace FeroTech.Web.Controllers
         }
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Employee model)
+        public async Task<IActionResult> Create(EmployeeDto model)
         {
             if (ModelState.IsValid)
             {
-                var employee = new Employee
-                {
-                    EmployeeId = Guid.NewGuid(),
-                    FullName = model.FullName,
-                    Email = model.Email,
-                    Phone = model.Phone,
-                    Department = model.Department,
-                    JobTitle = model.JobTitle,
-                    IsActive = model.IsActive
-                };
-
-                _context.Set<Employee>().Add(employee);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                await _rep.Create(model);
             }
-
-            return View(model);
+            return RedirectToAction("Create");
         }
 
         public async Task<IActionResult> Index()

@@ -28,11 +28,22 @@ namespace FeroTech.Infrastructure.Repositories
             return await _context.Employees.FindAsync(id);
         }
 
-        public async Task AddAsync(Employee asset)
+        public async Task Create(EmployeeDto model)
         {
-            _context.Employees.Add(asset);
+            var assets = new Employee
+            {
+                EmployeeId = Guid.NewGuid(),
+                FullName = model.FullName,
+                Email = model.Email,
+                Phone = model.Phone,
+                Department = model.Department,
+                JobTitle = model.JobTitle,
+                IsActive = model.IsActive
+            };
+            _context.Employees.Add(assets);
             await _context.SaveChangesAsync();
         }
+        
 
         public async Task UpdateAsync(Employee asset)
         {

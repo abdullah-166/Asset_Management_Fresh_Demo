@@ -1,4 +1,5 @@
 ﻿using FeroTech.Infrastructure.Domain.Entities;
+using FeroTech.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +12,8 @@ namespace FeroTech.Infrastructure.Application.Interfaces
     {
         Task<IEnumerable<Employee>> GetAllAsync();
         Task<Employee?> GetByIdAsync(int id);
-        Task AddAsync(Employee product);
-        Task UpdateAsync(Employee product);
+        Task Create(EmployeeDto model);
+        Task UpdateAsync(Employee asset);
         Task DeleteAsync(int id);
     }
 }
