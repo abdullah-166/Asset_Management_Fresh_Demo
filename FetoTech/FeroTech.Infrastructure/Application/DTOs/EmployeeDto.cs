@@ -9,7 +9,6 @@ namespace FeroTech.Infrastructure.Application.DTOs
 {
     public class Employee
     {
-        
         public Guid EmployeeId { get; set; }
 
         [StringLength(100)]

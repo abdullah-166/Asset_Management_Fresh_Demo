@@ -14,8 +14,7 @@ namespace FeroTech.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmployeeRepository _rep;  
-        public EmployeeController(ApplicationDbContext context, 
-            IEmployeeRepository rep)
+        public EmployeeController(ApplicationDbContext context, IEmployeeRepository rep)
         {
             _context = context;
             _rep = rep;
@@ -24,7 +23,6 @@ namespace FeroTech.Web.Controllers
         public IActionResult Create()
         {
             return View();
-            
         }
 
         [HttpPost]

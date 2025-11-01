@@ -22,7 +22,7 @@ namespace FeroTech.Web.Controllers
             return View();
         }
         [HttpPost]
-        public async Task<IActionResult> AssetCreate(AssetDto model)
+        public async Task<IActionResult> Create(AssetDto model)
         {
             if (ModelState.IsValid)
             {
