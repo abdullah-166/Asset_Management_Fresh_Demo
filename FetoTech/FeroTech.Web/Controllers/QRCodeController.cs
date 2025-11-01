@@ -16,7 +16,7 @@ namespace FeroTech.Web.Controllers
         {
             _context = context;
         }
-
+        //iiii
         // GET: QRCode/Create
         public IActionResult Create()
         {
