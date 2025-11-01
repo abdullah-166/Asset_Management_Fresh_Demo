@@ -1,4 +1,5 @@
-﻿using FeroTech.Infrastructure.Application.Interfaces;
+﻿using FeroTech.Infrastructure.Application.DTOs;
+using FeroTech.Infrastructure.Application.Interfaces;
 using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -28,9 +29,23 @@ namespace FeroTech.Infrastructure.Repositories
             return await _context.Assets.FindAsync(id);
         }
 
-        public async Task AddAsync(Asset asset)
+        public async Task Create(AssetDto model)
         {
-            _context.Assets.Add(asset);
+            var assets = new Asset
+            {
+                Category = model.Category,
+                Brand = model.Brand,
+                Modell = model.Modell,
+                PurchaseDate = model.PurchaseDate,
+                PurchaseOrderNo = model.PurchaseOrderNo,
+                Supplier = model.Supplier,
+                PurchasePrice = model.PurchasePrice,
+                WarrantyEndDate = model.WarrantyEndDate,
+                Status = model.Status,
+                Notes = model.Notes,
+                IsActive = model.IsActive
+            };
+            _context.Assets.Add(assets);
             await _context.SaveChangesAsync();
         }
 
