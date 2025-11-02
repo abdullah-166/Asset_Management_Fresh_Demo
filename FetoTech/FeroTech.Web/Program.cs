@@ -24,6 +24,7 @@ builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

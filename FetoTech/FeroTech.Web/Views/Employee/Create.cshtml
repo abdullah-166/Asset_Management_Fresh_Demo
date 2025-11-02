@@ -59,5 +59,23 @@
         </div>
     </div>
 </form>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            @if (TempData["SuccessMessage"] != null)
+            {
+                    <text>
+                        Swal.fire({
+                            title: 'Success!',
+                            text: '@TempData["SuccessMessage"]',
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        });
+                    </text>
+            }
+        });
+    </script>
+}
+
 
 
