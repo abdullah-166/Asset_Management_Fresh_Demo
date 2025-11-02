@@ -60,11 +60,12 @@ namespace FeroTech.Infrastructure.Repositories
                 .ToListAsync();
 
             return new Dictionary<string, object>
-            {
-                { "AvailableAssets", availableAssets },
-                { "ActiveEmployees", activeEmployees }
-            };
+    {
+        { "AvailableAssets", availableAssets },
+        { "ActiveEmployees", activeEmployees }
+    };
         }
+
 
         public async Task UpdateAsync(DistributedAsset asset)
         {
