@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace FeroTech.Infrastructure.Application.DTOs
 {
-    public class QRCode
+    public class QRCodeDto
     {
-       
+
         public Guid QRCodeId { get; set; }
         public Guid AssetId { get; set; }
         [StringLength(128)]

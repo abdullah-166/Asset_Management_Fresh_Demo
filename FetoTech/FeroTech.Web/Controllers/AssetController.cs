@@ -27,6 +27,8 @@ namespace FeroTech.Web.Controllers
             if (ModelState.IsValid)
             {
                await _rep.Create(model);
+               TempData["SuccessMessage"] = "Successfully Created!";
+
             }
             return RedirectToAction("Create");
         }

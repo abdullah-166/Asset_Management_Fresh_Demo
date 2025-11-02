@@ -1,4 +1,6 @@
-﻿using FeroTech.Infrastructure.Domain.Entities;
+﻿using FeroTech.Infrastructure.Application.DTOs;
+using FeroTech.Infrastructure.Domain.Entities;
+using FeroTech.Infrastructure.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,8 +13,8 @@ namespace FeroTech.Infrastructure.Application.Interfaces
     {
         Task<IEnumerable<QRCode>> GetAllAsync();
         Task<QRCode?> GetByIdAsync(int id);
-        Task AddAsync(QRCode product);
-        Task UpdateAsync(QRCode product);
+        Task Create(QRCodeDto model);
+        Task UpdateAsync(QRCode asset);
         Task DeleteAsync(int id);
     }
 }

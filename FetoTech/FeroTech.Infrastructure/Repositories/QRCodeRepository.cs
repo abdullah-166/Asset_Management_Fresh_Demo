@@ -1,4 +1,5 @@
-﻿using FeroTech.Infrastructure.Application.Interfaces;
+﻿using FeroTech.Infrastructure.Application.DTOs;
+using FeroTech.Infrastructure.Application.Interfaces;
 using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -28,12 +29,21 @@ namespace FeroTech.Infrastructure.Repositories
             return await _context.QRCodes.FindAsync(id);
         }
 
-        public async Task AddAsync(QRCode asset)
+        public async Task Create(QRCodeDto model)
         {
-            _context.QRCodes.Add(asset);
+            var assets = new QRCode
+            {
+                QRCodeId = Guid.NewGuid(),
+                AssetId = model.AssetId,
+                QRCodeValue = model.QRCodeValue,
+                Quantity = model.Quantity,
+                GeneratedAt = DateTime.UtcNow,
+                IsPrinted = model.IsPrinted,
+                Notes = model.Notes
+            };
+            _context.QRCodes.Add(assets);
             await _context.SaveChangesAsync();
         }
-
         public async Task UpdateAsync(QRCode asset)
         {
             _context.QRCodes.Update(asset);

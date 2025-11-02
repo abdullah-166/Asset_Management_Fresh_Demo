@@ -1,102 +1,68 @@
-﻿using FeroTech.Infrastructure.Data;
+﻿using FeroTech.Infrastructure.Application.DTOs;
+using FeroTech.Infrastructure.Application.Interfaces;
+using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace FeroTech.Web.Controllers
 {
     public class QRCodeController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IQRCodeRepository _rep;
 
-        public QRCodeController(ApplicationDbContext context)
+        public QRCodeController(ApplicationDbContext context, IQRCodeRepository rep)
         {
             _context = context;
+            _rep = rep;
         }
-        //iiii
-        // GET: QRCode/Create
-        public IActionResult Create()
+
+        // GET: Create QR Code
+        public async Task<IActionResult> Create()
         {
+            // Load all available assets for dropdown
+            ViewBag.Assets = await _context.Assets
+                .Select(a => new SelectListItem
+                {
+                    Value = a.AssetId.ToString(),
+                    Text = $"{a.Brand} - {a.Modell}"
+                })
+                .ToListAsync();
+
             return View();
         }
 
-        // POST: QRCode/Create
+        // POST: Create QR Code
         [HttpPost]
-      
-        public async Task<IActionResult> Create(QRCode model)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(QRCodeDto model)
         {
             if (ModelState.IsValid)
             {
-                var qrCode = new QRCode
-                {
-                    QRCodeId = Guid.NewGuid(),
-                    AssetId = model.AssetId,
-                    QRCodeValue = model.QRCodeValue,
-                    Quantity = model.Quantity,
-                    GeneratedAt = DateTime.UtcNow,
-                    IsPrinted = model.IsPrinted,
-                    Notes = model.Notes
-                };
-
-                _context.QRCodes.Add(qrCode);
-                await _context.SaveChangesAsync();
-
-                // Redirect to index or show success message
-                return RedirectToAction(nameof(Index));
+                await _rep.Create(model);
+                TempData["SuccessMessage"] = "QR Code created successfully!";
+                return RedirectToAction(nameof(Create));
             }
+
+            // Reload assets if validation fails
+            ViewBag.Assets = await _context.Assets
+                .Select(a => new SelectListItem
+                {
+                    Value = a.AssetId.ToString(),
+                    Text = $"{a.Brand} - {a.Modell}"
+                })
+                .ToListAsync();
 
             return View(model);
         }
 
-        // GET: QRCode/Index
+        // QR Code Index
         public async Task<IActionResult> Index()
         {
-            var qrCodes = await _context.QRCodes
-                .Include(q => q.AssetId) // optional — replace with navigation property when available
-                .OrderByDescending(q => q.GeneratedAt)
-                .ToListAsync();
-
+            var qrCodes = await _rep.GetAllAsync();
             return View(qrCodes);
-        }
-
-        // GET: QRCode/Details/{id}
-        public async Task<IActionResult> Details(Guid id)
-        {
-            var qrCode = await _context.QRCodes.FirstOrDefaultAsync(q => q.QRCodeId == id);
-
-            if (qrCode == null)
-                return NotFound();
-
-            return View(qrCode);
-        }
-
-        // GET: QRCode/Delete/{id}
-        public async Task<IActionResult> Delete(Guid id)
-        {
-            var qrCode = await _context.QRCodes.FirstOrDefaultAsync(q => q.QRCodeId == id);
-
-            if (qrCode == null)
-                return NotFound();
-
-            return View(qrCode);
-        }
-
-        // POST: QRCode/Delete/{id}
-        [HttpPost, ActionName("Delete")]
-        
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var qrCode = await _context.QRCodes.FindAsync(id);
-            if (qrCode != null)
-            {
-                _context.QRCodes.Remove(qrCode);
-                await _context.SaveChangesAsync();
-            }
-
-            return RedirectToAction(nameof(Index));
         }
     }
 }
