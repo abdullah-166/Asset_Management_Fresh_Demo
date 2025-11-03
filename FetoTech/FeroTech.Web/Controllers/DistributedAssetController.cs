@@ -51,3 +51,4 @@ namespace FeroTech.Web.Controllers
         }
     }
 }
+//This is here to check the C# language version for the code file.
