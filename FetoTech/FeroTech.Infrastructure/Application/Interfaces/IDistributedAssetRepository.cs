@@ -13,6 +13,7 @@ namespace FeroTech.Infrastructure.Application.Interfaces
         Task<IEnumerable<DistributedAsset>> GetAllAsync();
         Task<DistributedAsset?> GetByIdAsync(int id);
         Task Create(DistributedAssetDto model);
+        Task<Dictionary<string, object>> GetCreateViewDataAsync();
         Task UpdateAsync(DistributedAsset product);
         Task DeleteAsync(int id);
     }
