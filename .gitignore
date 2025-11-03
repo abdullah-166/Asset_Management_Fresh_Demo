@@ -401,3 +401,4 @@ FodyWeavers.xsd
 *.sln.iml
 FetoTech/FeroTech.Web/appsettings.json
 FetoTech/FeroTech.Web/Controllers/DistributedAssetController.cs
+FetoTech/FeroTech.Web/appsettings.json
