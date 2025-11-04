@@ -1,20 +1,32 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using FeroTech.Web.Models;
+using FeroTech.Infrastructure.Data; // <-- ADDED
+using System.Linq; // <-- ADDED
 
 namespace FeroTech.Web.Controllers;
 
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
+    private readonly ApplicationDbContext _context; // <-- ADDED
 
-    public HomeController(ILogger<HomeController> logger)
+    public HomeController(ILogger<HomeController> logger, ApplicationDbContext context) // <-- UPDATED
     {
         _logger = logger;
+        _context = context; // <-- ADDED
     }
 
     public IActionResult Index()
     {
+        // --- ADDED THIS LOGIC ---
+        // Get the count from the database
+        int employeeCount = _context.Employees.Count();
+
+        // Pass the count to the view
+        ViewData["EmployeeCount"] = employeeCount;
+        // --- END ---
+
         return View();
     }
 
