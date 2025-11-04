@@ -32,6 +32,7 @@ namespace FeroTech.Infrastructure.Application.DTOs
         public decimal? PurchasePrice { get; set; }
 
         public DateTime? WarrantyEndDate { get; set; }
+        public int Quantity { get; set; }
 
         [StringLength(20)]
         public string Status { get; set; } = "Available";

@@ -2,6 +2,7 @@ using FeroTech.Infrastructure.Application.DTOs;
 using FeroTech.Infrastructure.Application.Interfaces;
 using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,21 +19,18 @@ namespace FeroTech.Web.Controllers
             _rep = rep;
         }
 
-        // ---------- INDEX ----------
         public IActionResult Index()
         {
             return View();
         }
 
-        // ---------- LOAD ALL (for DataTable AJAX) ----------
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
             var employees = await _rep.GetAllAsync();
-            return Json(employees); // ✅ return plain array (DataTable expects array, not { data: [] })
+            return Json(employees); 
         }
 
-        // ---------- CREATE ----------
         [HttpGet]
         public IActionResult Create()
         {
@@ -51,7 +49,6 @@ namespace FeroTech.Web.Controllers
             return Json(new { success = true, message = "Employee created successfully!" });
         }
 
-        // ---------- EDIT ----------
         [HttpGet]
         public async Task<IActionResult> GetById(Guid id)
         {
@@ -82,7 +79,6 @@ namespace FeroTech.Web.Controllers
             return Json(new { success = true, message = "Employee updated successfully!" });
         }
 
-        // ---------- DELETE ----------
         [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {

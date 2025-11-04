@@ -1,2 +1,176 @@
-﻿@model IEnumerable<FeroTech.Infrastructure.Application.DTOs.AssetDto>
-﻿<h1>This is from Asset Page...</h1>
+﻿@{
+    ViewData["Title"] = "Asset Details";
+}
+
+<h2>Asset Details</h2>
+<hr />
+
+<div class="text-end mb-3">
+    <a href="@Url.Action("Create", "Asset")" class="btn btn-success">+ Add Asset</a>
+</div>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css" />
+
+<table id="assetTable" class="display" style="width:100%">
+    <thead>
+        <tr>
+            <th>Category</th>
+            <th>Brand</th>
+            <th>Model</th>
+            <th>Purchase Date</th>
+            <th>Price</th>
+            <th>Warranty End</th>
+            <th>Status</th>
+            <th>Quantity</th>
+            <th>Active</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+</table>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            let table = new DataTable('#assetTable', {
+                ajax: {
+                    url: '@Url.Action("GetAll", "Asset")',
+                    dataSrc: ''
+                },
+                columns: [
+                    { data: 'category' },
+                    { data: 'brand' },
+                    { data: 'modell' },
+                    {
+                        data: 'purchaseDate',
+                        render: function (data) {
+                            return data ? new Date(data).toLocaleDateString() : '-';
+                        }
+                    },
+                    {
+                        data: 'purchasePrice',
+                        render: function (data) {
+                            return data ? `$${data.toFixed(2)}` : '-';
+                        }
+                    },
+                    {
+                        data: 'warrantyEndDate',
+                        render: function (data) {
+                            return data ? new Date(data).toLocaleDateString() : '-';
+                        }
+                    },
+                    { data: 'status' },
+                    { data: 'quantity' },
+                    {
+                        data: 'isActive',
+                        render: function (data) {
+                            return data ? 'Yes' : 'No';
+                        }
+                    },
+                    {
+                        data: 'assetId',
+                        render: function (data, type, row) {
+                            return `
+                                <button class="btn btn-sm btn-primary edit-btn" data-id="${data}">Edit</button>
+                                <button class="btn btn-sm btn-danger delete-btn" data-id="${data}">Delete</button>
+                            `;
+                        }
+                    }
+                ]
+            });
+
+            // -------- DELETE ASSET --------
+            $('#assetTable').on('click', '.delete-btn', function () {
+                const id = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to delete this asset?",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '@Url.Action("Delete", "Asset")',
+                            type: 'POST',
+                            data: { id: id },
+                            success: function (response) {
+                                if (response.success) {
+                                    Swal.fire('Deleted!', response.message, 'success');
+                                    table.ajax.reload();
+                                } else {
+                                    Swal.fire('Error!', response.message, 'error');
+                                }
+                            },
+                            error: function () {
+                                Swal.fire('Error!', 'Something went wrong.', 'error');
+                            }
+                        });
+                    }
+                });
+            });
+
+            // -------- EDIT ASSET --------
+            $('#assetTable').on('click', '.edit-btn', function () {
+                const id = $(this).data('id');
+
+                $.ajax({
+                    url: '@Url.Action("GetById", "Asset")',
+                    type: 'GET',
+                    data: { id: id },
+                    success: function (response) {
+                        if (response.success) {
+                            const a = response.data;
+                            Swal.fire({
+                                title: 'Edit Asset',
+                                html: `
+                                    <input id="category" class="swal2-input" value="${a.category}" placeholder="Category">
+                                    <input id="brand" class="swal2-input" value="${a.brand}" placeholder="Brand">
+                                    <input id="modell" class="swal2-input" value="${a.modell}" placeholder="Model">
+                                    <input id="purchasePrice" type="number" class="swal2-input" value="${a.purchasePrice || ''}" placeholder="Price">
+                                    <input id="quantity" type="number" class="swal2-input" value="${a.quantity}" placeholder="Quantity">
+                                    <label><input type="checkbox" id="isActive" ${a.isActive ? 'checked' : ''}/> Active</label>
+                                `,
+                                showCancelButton: true,
+                                confirmButtonText: 'Save'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $.ajax({
+                                        url: '@Url.Action("Edit", "Asset")',
+                                        type: 'POST',
+                                        data: {
+                                            AssetId: a.assetId,
+                                            Category: $('#category').val(),
+                                            Brand: $('#brand').val(),
+                                            Modell: $('#modell').val(),
+                                            PurchasePrice: $('#purchasePrice').val(),
+                                            Quantity: $('#quantity').val(),
+                                            IsActive: $('#isActive').is(':checked')
+                                        },
+                                        success: function (res) {
+                                            if (res.success) {
+                                                Swal.fire('Updated!', res.message, 'success');
+                                                table.ajax.reload();
+                                            } else {
+                                                Swal.fire('Error!', res.message, 'error');
+                                            }
+                                        },
+                                        error: function () {
+                                            Swal.fire('Error!', 'Something went wrong.', 'error');
+                                        }
+                                    });
+                                }
+                            });
+                        } else {
+                            Swal.fire('Error!', response.message, 'error');
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+}

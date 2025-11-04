@@ -36,7 +36,6 @@ namespace FeroTech.Infrastructure.Repositories
                 QRCodeId = Guid.NewGuid(),
                 AssetId = model.AssetId,
                 QRCodeValue = model.QRCodeValue,
-                Quantity = model.Quantity,
                 GeneratedAt = DateTime.UtcNow,
                 IsPrinted = model.IsPrinted,
                 Notes = model.Notes
