@@ -70,6 +70,13 @@
             <span asp-validation-for="WarrantyEndDate" class="text-danger"></span>
         </div>
 
+        <div class="col-md-6 mb-3">
+            <label class="form-label">Quantity</label>
+            <input asp-for="Quantity" type="number" class="form-control" min="1" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+
+
         @* <div class="col-md-6 mb-3">
             <label class="form-label">Location</label>
             <input asp-for="Location" class="form-control" />
@@ -100,6 +107,9 @@
     </div>
 </form>
 @section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
         $(document).ready(function () {
             @if (TempData["SuccessMessage"] != null)

@@ -19,10 +19,9 @@ namespace FeroTech.Web.Controllers
             _rep = rep;
         }
 
-        // GET: Create QR Code
         public async Task<IActionResult> Create()
         {
-            // Load all available assets for dropdown
+          
             ViewBag.Assets = await _context.Assets
                 .Select(a => new SelectListItem
                 {
@@ -34,7 +33,6 @@ namespace FeroTech.Web.Controllers
             return View();
         }
 
-        // POST: Create QR Code
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(QRCodeDto model)
@@ -46,7 +44,6 @@ namespace FeroTech.Web.Controllers
                 return RedirectToAction(nameof(Create));
             }
 
-            // Reload assets if validation fails
             ViewBag.Assets = await _context.Assets
                 .Select(a => new SelectListItem
                 {
@@ -57,8 +54,6 @@ namespace FeroTech.Web.Controllers
 
             return View(model);
         }
-
-        // QR Code Index
         public async Task<IActionResult> Index()
         {
             var qrCodes = await _rep.GetAllAsync();

@@ -33,6 +33,7 @@ namespace FeroTech.Infrastructure.Domain.Entities
         public decimal? PurchasePrice { get; set; }
 
         public DateTime? WarrantyEndDate { get; set; }
+        public int Quantity { get; set; }  
 
         [StringLength(20)]
         public string Status { get; set; } = "Available";
@@ -41,5 +42,7 @@ namespace FeroTech.Infrastructure.Domain.Entities
         public string? Notes { get; set; }
 
         public bool IsActive { get; set; } = true;
+        public ICollection<QRCode>? QRCodes { get; set; }
+
     }
 }

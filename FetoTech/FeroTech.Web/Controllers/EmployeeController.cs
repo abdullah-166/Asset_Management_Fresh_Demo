@@ -1,28 +1,39 @@
-
-﻿using FeroTech.Infrastructure.Application.DTOs;
+using FeroTech.Infrastructure.Application.DTOs;
 using FeroTech.Infrastructure.Application.Interfaces;
 using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
-using FeroTech.Infrastructure.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 
 namespace FeroTech.Web.Controllers
 {
+    
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly IEmployeeRepository _rep;  
+        private readonly IEmployeeRepository _rep;
+
         public EmployeeController(ApplicationDbContext context, IEmployeeRepository rep)
         {
             _context = context;
             _rep = rep;
         }
 
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var employees = await _rep.GetAllAsync();
+            return Json(employees); 
+        }
+
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -31,82 +42,56 @@ namespace FeroTech.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(EmployeeDto model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _rep.Create(model);
-                TempData["SuccessMessage"] = "Successfully Created!";
-
+                return Json(new { success = false, message = "Validation failed." });
             }
-            return RedirectToAction("Create"); 
+
+            await _rep.Create(model);
+            return Json(new { success = true, message = "Employee created successfully!" });
         }
 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> GetById(Guid id)
         {
-            var employees = await _context.Set<Employee>()
-                .Where(e => e.IsActive)
-                .ToListAsync();
-
-            return View(employees);
-        }
-
-        public async Task<IActionResult> Edit(Guid id)
-        {
-            var employee = await _context.Set<Employee>().FindAsync(id);
+            var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
-            {
-                return NotFound();
-            }
-            return View(employee);
+                return Json(new { success = false, message = "Employee not found." });
+
+            return Json(new { success = true, data = employee });
         }
+
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Employee model)
+        public async Task<IActionResult> Edit(Employee model)
         {
-            if (id != model.EmployeeId)
-            {
-                return BadRequest();
-            }
+            var employee = await _context.Employees.FindAsync(model.EmployeeId);
+            if (employee == null)
+                return Json(new { success = false, message = "Employee not found." });
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(model);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Set<Employee>().Any(e => e.EmployeeId == id))
-                        return NotFound();
-                    else
-                        throw;
-                }
-            }
-            return View(model);
+            employee.FullName = model.FullName;
+            employee.Email = model.Email;
+            employee.Phone = model.Phone;
+            employee.Department = model.Department;
+            employee.JobTitle = model.JobTitle;
+            employee.IsActive = model.IsActive;
+
+            _context.Update(employee);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Employee updated successfully!" });
         }
 
+        [HttpPost]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var employee = await _context.Set<Employee>().FindAsync(id);
+            var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
-            {
-                return NotFound();
-            }
-            return View(employee);
-        }
+                return Json(new { success = false, message = "Employee not found." });
 
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
-        {
-            var employee = await _context.Set<Employee>().FindAsync(id);
-            if (employee != null)
-            {
-                _context.Set<Employee>().Remove(employee);
-                await _context.SaveChangesAsync();
-            }
-            return RedirectToAction(nameof(Index));
+            _context.Employees.Remove(employee);
+            await _context.SaveChangesAsync();
+
+            return Json(new { success = true, message = "Employee deleted successfully!" });
         }
     }
 }
