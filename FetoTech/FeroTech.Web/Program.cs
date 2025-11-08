@@ -1,8 +1,9 @@
+using FeroTech.Infrastructure.Application.Interfaces;
+using FeroTech.Infrastructure.Data;
+using FeroTech.Infrastructure.Repositories;
+using FeroTech.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using FeroTech.Infrastructure.Data;
-using FeroTech.Infrastructure.Application.Interfaces;
-using FeroTech.Infrastructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +23,8 @@ builder.Services.AddControllersWithViews();
 // DI for Repository + Service
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddScoped<QRCodeService>();
+
 
 
 var app = builder.Build();
