@@ -8,6 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\Pages\Account\Login.cshtml.cs" />
+    <Content Remove="wwwroot\Pages\Account\ResetPassword.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="wwwroot\Pages\Account\Login.cshtml.cs" />
+    <Compile Include="wwwroot\Pages\Account\ResetPassword.cshtml.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="8.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.14" />
@@ -22,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\qrcodes\" />
+    <Folder Include="Areas\Identity\" />
   </ItemGroup>
 
 </Project>
