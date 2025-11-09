@@ -2,11 +2,12 @@
 using FeroTech.Infrastructure.Application.Interfaces;
 using FeroTech.Infrastructure.Data;
 using FeroTech.Infrastructure.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FeroTech.Web.Controllers
-{
+namespace FeroTech.Web.Controllers{
+    [Authorize]
     public class AssetController : Controller
     {
         private readonly ApplicationDbContext _context;

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FeroTech.Web.Controllers
 {
-    
+    [Authorize]
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
