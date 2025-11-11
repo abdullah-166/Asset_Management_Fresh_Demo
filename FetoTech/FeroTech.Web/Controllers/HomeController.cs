@@ -27,7 +27,7 @@ public class HomeController : Controller
         ViewData["EmployeeCount"] = employeeCount;
         // --- END ---
 
-        return View();
+        return RedirectToPage("/Account/Login", new { area = "Identity" });
     }
 
     public IActionResult Privacy()

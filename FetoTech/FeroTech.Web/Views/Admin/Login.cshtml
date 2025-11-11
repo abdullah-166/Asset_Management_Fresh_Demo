@@ -8,12 +8,21 @@
         <label>Email:</label>
         <input type="email" name="email" required />
     </div>
+
     <div>
         <label>Password:</label>
         <input type="password" name="password" required />
     </div>
+
     <button type="submit">Login</button>
 </form>
+
+<!-- 🔹 Forgot Password Link -->
+<p style="margin-top: 15px;">
+    <a asp-controller="Admin" asp-action="ForgotPassword" style="text-decoration:none; color:#007bff;">
+        Forgot Password?
+    </a>
+</p>
 
 @if (ViewBag.Error != null)
 {
