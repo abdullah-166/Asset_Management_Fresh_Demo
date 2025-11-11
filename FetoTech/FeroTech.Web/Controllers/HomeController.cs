@@ -2,10 +2,11 @@ using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using FeroTech.Web.Models;
 using FeroTech.Infrastructure.Data; // <-- ADDED
-using System.Linq; // <-- ADDED
+using System.Linq;
+using Microsoft.AspNetCore.Authorization; // <-- ADDED
 
 namespace FeroTech.Web.Controllers;
-
+[Authorize]
 public class HomeController : Controller
 {
     private readonly ILogger<HomeController> _logger;
@@ -26,8 +27,7 @@ public class HomeController : Controller
         // Pass the count to the view
         ViewData["EmployeeCount"] = employeeCount;
         // --- END ---
-
-        return RedirectToPage("/Account/Login", new { area = "Identity" });
+        return View();
     }
 
     public IActionResult Privacy()
