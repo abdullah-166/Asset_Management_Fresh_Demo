@@ -9,10 +9,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FeroTech.Web.Controllers
 {
-<<<<<<< HEAD
+
     [Authorize]
-=======
->>>>>>> 1400fb19a354a98e914167a65c36b5971cca63f6
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
