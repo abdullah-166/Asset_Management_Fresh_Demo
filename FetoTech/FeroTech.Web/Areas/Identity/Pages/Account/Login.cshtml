@@ -1,11 +1,19 @@
+<<<<<<< Updated upstream
 ﻿@page
 @model FeroTech.Web.Areas.Identity.Pages.Account.LoginModel
 @{
     ViewData["Title"] = "Log in";
+=======
+@page
+@model FeroTech.Web.Areas.Identity.Pages.Account.LoginModel
+@{
+    ViewData["Title"] = "Login";
+>>>>>>> Stashed changes
 }
 
 <h2 class="text-center mb-4">@ViewData["Title"]</h2>
 
+<<<<<<< Updated upstream
 <div class="row justify-content-center">
     <div class="col-md-5">
         <form method="post" class="card p-4 shadow-sm">
@@ -41,3 +49,36 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+=======
+<form method="post" class="mx-auto" style="max-width:400px;">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Input.Email" class="form-label"></label>
+        <input asp-for="Input.Email" class="form-control" />
+        <span asp-validation-for="Input.Email" class="text-danger"></span>
+    </div>
+
+    <div class="form-group mb-3">
+        <label asp-for="Input.Password" class="form-label"></label>
+        <input asp-for="Input.Password" class="form-control" type="password" />
+        <span asp-validation-for="Input.Password" class="text-danger"></span>
+    </div>
+
+    <div class="form-check mb-3">
+        <input asp-for="Input.RememberMe" class="form-check-input" />
+        <label asp-for="Input.RememberMe" class="form-check-label"></label>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100">Login</button>
+
+    <div class="text-center mt-3">
+        <a asp-page="./ForgotPassword">Forgot your password?</a><br />
+        <a asp-page="./Register">Don't have an account? Register</a>
+    </div>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
+>>>>>>> Stashed changes
