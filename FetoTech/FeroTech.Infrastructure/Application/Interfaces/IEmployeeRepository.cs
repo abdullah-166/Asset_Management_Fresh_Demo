@@ -18,5 +18,6 @@ namespace FeroTech.Infrastructure.Application.Interfaces
         Task Create(EmployeeDto model);
         Task UpdateAsync(Employee asset);
         Task DeleteAsync(int id);
+        
     }
 }

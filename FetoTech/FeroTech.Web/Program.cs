@@ -24,6 +24,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<QRCodeService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
 
 
 
