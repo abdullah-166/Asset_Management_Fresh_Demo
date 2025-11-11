@@ -50,18 +50,19 @@
                     <span>Assets</span>
                 </a>
             </li>
+            <li class="@((ViewContext?.RouteData?.Values["Controller"]?.ToString() == "DistributedAsset") ? "active" : "")">
+                <a asp-controller="DistributedAsset" asp-action="Index">
+                    <i class="fa-solid fa-briefcase"></i>
+                    <span>Distributed Asset</span>
+                </a>
+            </li>
             <li class="@((ViewContext?.RouteData?.Values["Controller"]?.ToString() == "Notification") ? "active" : "")">
                 <a asp-controller="Notification" asp-action="Index">
                     <i class="fa-solid fa-bell"></i>
                     <span>Notifications</span>
                 </a>
             </li>
-            <li class="@((ViewContext?.RouteData?.Values["Controller"]?.ToString() == "Account" && ViewContext?.RouteData?.Values["Action"]?.ToString() == "Register") ? "active" : "")">
-                <a asp-controller="Account" asp-action="Register">
-                    <i class="fa-solid fa-key"></i>
-                    <span>Register</span>
-                </a>
-            </li>
+          
             <li class="@((ViewContext?.RouteData?.Values["Controller"]?.ToString() == "Home" && ViewContext?.RouteData?.Values["Action"]?.ToString() == "Privacy") ? "active" : "")">
                 <a asp-controller="Home" asp-action="Privacy">
                     <i class="fa-solid fa-lock"></i>
@@ -72,6 +73,12 @@
                 <a href="#">
                     <i class="fa-solid fa-gear"></i>
                     <span>Settings</span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                    <i class="fa fa-sign-out"></i>
+                    <span>Logout</span>
                 </a>
             </li>
         </ul>
