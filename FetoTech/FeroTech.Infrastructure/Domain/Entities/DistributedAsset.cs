@@ -1,25 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace FeroTech.Infrastructure.Domain.Entities
 {
     public class DistributedAsset
     {
         [Key]
-        public Guid DistributedId { get; set; }
-        public int AssetId { get; set; }
-        public Guid? AssignedToUserId { get; set; }
-        public DateTime? AssignedAt { get; set; }
-        [StringLength(128)]
+        public Guid DistributedAssetId { get; set; } = Guid.NewGuid();
+
+        [Required]
+        public Guid EmployeeId { get; set; }
+
+        [Required]
+        public Guid AssetId { get; set; }
+
+        [Required]
+        [StringLength(255)]
         public string? QRCodeValue { get; set; }
-        [StringLength(128)]
-        public string Status { get; set; } = "Available";
-        public DateTime? WarrantyEndDate { get; set; }
+
+        [Required]
+        public DateTime AssignedDate { get; set; } = DateTime.UtcNow;
+
+        public DateTime? EndDate { get; set; }
+
+        [StringLength(255)]
         public string? Notes { get; set; }
-        public bool IsActive { get; set; } = true;
     }
 }

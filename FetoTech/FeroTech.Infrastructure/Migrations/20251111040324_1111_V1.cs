@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace FeroTech.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class _0111_V6 : Migration
+    public partial class _1111_V1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -56,7 +56,6 @@ namespace FeroTech.Infrastructure.Migrations
                 {
                     AssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Category = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
-                    Name = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     Brand = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Modell = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -64,6 +63,7 @@ namespace FeroTech.Infrastructure.Migrations
                     Supplier = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     PurchasePrice = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     WarrantyEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Notes = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
@@ -77,19 +77,17 @@ namespace FeroTech.Infrastructure.Migrations
                 name: "DistributedAssets",
                 columns: table => new
                 {
-                    DistributedId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AssetId = table.Column<int>(type: "int", nullable: false),
-                    AssignedToUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
-                    AssignedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    QRCodeValue = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    Status = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    WarrantyEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                    DistributedAssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    EmployeeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QRCodeValue = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
+                    AssignedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ReturnedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    Notes = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DistributedAssets", x => x.DistributedId);
+                    table.PrimaryKey("PK_DistributedAssets", x => x.DistributedAssetId);
                 });
 
             migrationBuilder.CreateTable(
@@ -107,23 +105,6 @@ namespace FeroTech.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Employees", x => x.EmployeeId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "QRCodes",
-                columns: table => new
-                {
-                    QRCodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    AssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    QRCodeValue = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
-                    GeneratedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    IsPrinted = table.Column<bool>(type: "bit", nullable: false),
-                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_QRCodes", x => x.QRCodeId);
                 });
 
             migrationBuilder.CreateTable(
@@ -232,6 +213,28 @@ namespace FeroTech.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "QRCodes",
+                columns: table => new
+                {
+                    QRCodeId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    AssetId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    QRCodeValue = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    GeneratedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    IsPrinted = table.Column<bool>(type: "bit", nullable: false),
+                    Notes = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_QRCodes", x => x.QRCodeId);
+                    table.ForeignKey(
+                        name: "FK_QRCodes_Assets_AssetId",
+                        column: x => x.AssetId,
+                        principalTable: "Assets",
+                        principalColumn: "AssetId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -270,6 +273,11 @@ namespace FeroTech.Infrastructure.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_QRCodes_AssetId",
+                table: "QRCodes",
+                column: "AssetId");
         }
 
         /// <inheritdoc />
@@ -291,9 +299,6 @@ namespace FeroTech.Infrastructure.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Assets");
-
-            migrationBuilder.DropTable(
                 name: "DistributedAssets");
 
             migrationBuilder.DropTable(
@@ -307,6 +312,9 @@ namespace FeroTech.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Assets");
         }
     }
 }

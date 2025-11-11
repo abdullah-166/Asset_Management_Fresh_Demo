@@ -21,7 +21,11 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<QRCodeService>();
+<<<<<<< Updated upstream
 builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+=======
+builder.Services.AddScoped<IDistributedAssetRepository, DistributedAssetRepository>();
+>>>>>>> Stashed changes
 
 
 builder.Services.AddControllersWithViews();
