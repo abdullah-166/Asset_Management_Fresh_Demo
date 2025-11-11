@@ -9,16 +9,22 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FeroTech.Web.Controllers
 {
+<<<<<<< HEAD
     [Authorize]
+=======
+>>>>>>> 1400fb19a354a98e914167a65c36b5971cca63f6
     public class EmployeeController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IEmployeeRepository _rep;
+        private readonly INotificationRepository _notificationRepo; // <-- 1. Add notification repo
 
-        public EmployeeController(ApplicationDbContext context, IEmployeeRepository rep)
+        // 2. Inject notification repo in the constructor
+        public EmployeeController(ApplicationDbContext context, IEmployeeRepository rep, INotificationRepository notificationRepo)
         {
             _context = context;
             _rep = rep;
+            _notificationRepo = notificationRepo; // <-- 3. Assign it
         }
 
         public IActionResult Index()
@@ -30,7 +36,7 @@ namespace FeroTech.Web.Controllers
         public async Task<IActionResult> GetAll()
         {
             var employees = await _rep.GetAllAsync();
-            return Json(employees); 
+            return Json(employees);
         }
 
         [HttpGet]
@@ -48,6 +54,15 @@ namespace FeroTech.Web.Controllers
             }
 
             await _rep.Create(model);
+
+            // --- ADD NOTIFICATION ---
+            await _notificationRepo.AddAsync(
+                message: $"New employee '{model.FullName}' was created.",
+                module: "Employee",
+                actionType: "Create"
+            );
+            // --------------------------
+
             return Json(new { success = true, message = "Employee created successfully!" });
         }
 
@@ -78,6 +93,14 @@ namespace FeroTech.Web.Controllers
             _context.Update(employee);
             await _context.SaveChangesAsync();
 
+            // --- ADD NOTIFICATION ---
+            await _notificationRepo.AddAsync(
+                message: $"Employee '{employee.FullName}' was updated.",
+                module: "Employee",
+                actionType: "Update"
+            );
+            // --------------------------
+
             return Json(new { success = true, message = "Employee updated successfully!" });
         }
 
@@ -90,6 +113,14 @@ namespace FeroTech.Web.Controllers
 
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
+
+            // --- ADD NOTIFICATION ---
+            await _notificationRepo.AddAsync(
+                message: $"Employee '{employee.FullName}' was deleted.",
+                module: "Employee",
+                actionType: "Delete"
+            );
+            // --------------------------
 
             return Json(new { success = true, message = "Employee deleted successfully!" });
         }

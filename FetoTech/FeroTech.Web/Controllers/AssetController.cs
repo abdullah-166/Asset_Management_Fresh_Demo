@@ -12,11 +12,14 @@ namespace FeroTech.Web.Controllers{
     {
         private readonly ApplicationDbContext _context;
         private readonly IAssetRepository _rep;
+        private readonly INotificationRepository _notificationRepo; // <-- 1. Add notification repo
 
-        public AssetController(ApplicationDbContext context, IAssetRepository rep)
+        // 2. Inject notification repo in the constructor
+        public AssetController(ApplicationDbContext context, IAssetRepository rep, INotificationRepository notificationRepo)
         {
             _context = context;
             _rep = rep;
+            _notificationRepo = notificationRepo; // <-- 3. Assign it
         }
 
         [HttpGet]
@@ -31,6 +34,16 @@ namespace FeroTech.Web.Controllers{
             if (ModelState.IsValid)
             {
                 await _rep.Create(model);
+
+                // --- ADD NOTIFICATION ---
+                string assetName = $"{model.Brand} {model.Modell}";
+                await _notificationRepo.AddAsync(
+                    message: $"New asset '{assetName}' ({model.Quantity}x) was created.",
+                    module: "Asset",
+                    actionType: "Create"
+                );
+                // --------------------------
+
                 TempData["SuccessMessage"] = "Asset and QR Codes generated successfully!";
                 return RedirectToAction("Create");
             }
@@ -44,6 +57,7 @@ namespace FeroTech.Web.Controllers{
             var assets = await _context.Assets.Where(x => x.Status == "Available").ToListAsync();
             return View(assets);
         }
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
@@ -78,6 +92,15 @@ namespace FeroTech.Web.Controllers{
             _context.Update(asset);
             await _context.SaveChangesAsync();
 
+            // --- ADD NOTIFICATION ---
+            string assetName = $"{asset.Brand} {asset.Modell}";
+            await _notificationRepo.AddAsync(
+                message: $"Asset '{assetName}' was updated.",
+                module: "Asset",
+                actionType: "Update"
+            );
+            // --------------------------
+
             return Json(new { success = true, message = "Asset updated successfully!" });
         }
 
@@ -91,8 +114,16 @@ namespace FeroTech.Web.Controllers{
             _context.Assets.Remove(asset);
             await _context.SaveChangesAsync();
 
+            // --- ADD NOTIFICATION ---
+            string assetName = $"{asset.Brand} {asset.Modell}";
+            await _notificationRepo.AddAsync(
+                message: $"Asset '{assetName}' was deleted.",
+                module: "Asset",
+                actionType: "Delete"
+            );
+            // --------------------------
+
             return Json(new { success = true, message = "Asset deleted successfully!" });
         }
-
     }
 }

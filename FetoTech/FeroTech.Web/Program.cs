@@ -21,6 +21,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 builder.Services.AddScoped<IAssetRepository, AssetRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<QRCodeService>();
+builder.Services.AddScoped<INotificationRepository, NotificationRepository>();
+
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
