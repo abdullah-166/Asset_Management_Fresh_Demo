@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FeroTech.Infrastructure.Domain.Entities;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -6,13 +7,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FeroTech.Infrastructure.Application.DTOs
-{
-    public class AssetDto
-    {
+namespace FeroTech.Infrastructure.Application.DTOs{
+    public class AssetDto{
         public Guid AssetId { get; set; }
+
         [StringLength(50)]
         public string? Category { get; set; }
+
+        public Guid? CategoryId { get; set; }
+        public Category? CategoryRef { get; set; }   
 
         [StringLength(50)]
         public string? Brand { get; set; }
@@ -23,7 +26,7 @@ namespace FeroTech.Infrastructure.Application.DTOs
         public DateTime? PurchaseDate { get; set; }
 
         [StringLength(50)]
-        public string? PurchaseOrderNo { get; set; }//invoice number
+        public string? PurchaseOrderNo { get; set; }
 
         [StringLength(100)]
         public string? Supplier { get; set; }
@@ -32,6 +35,7 @@ namespace FeroTech.Infrastructure.Application.DTOs
         public decimal? PurchasePrice { get; set; }
 
         public DateTime? WarrantyEndDate { get; set; }
+
         public int Quantity { get; set; }
 
         [StringLength(20)]
@@ -41,5 +45,6 @@ namespace FeroTech.Infrastructure.Application.DTOs
         public string? Notes { get; set; }
 
         public bool IsActive { get; set; } = true;
+        public List<QRCodeDto>? QRCodes { get; set; }
     }
 }

@@ -10,16 +10,18 @@ namespace FeroTech.Infrastructure.Domain.Entities
 
         [Required]
         public Guid EmployeeId { get; set; }
+        public Employee? Employee { get; set; }
+
+        [Required]
+        public Guid CategoryId { get; set; }
+        public Category? Category { get; set; }
 
         [Required]
         public Guid AssetId { get; set; }
+        public Asset? Asset { get; set; }
 
         [Required]
-        [StringLength(255)]
-        public string? QRCodeValue { get; set; }
-
-        [Required]
-        public DateTime AssignedDate { get; set; } = DateTime.UtcNow;
+        public DateTime AssignedDate { get; set; }
 
         public DateTime? EndDate { get; set; }
 

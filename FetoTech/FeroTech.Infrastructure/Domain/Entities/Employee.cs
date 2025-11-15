@@ -21,8 +21,7 @@ namespace FeroTech.Infrastructure.Domain.Entities
         [StringLength(20)]
         public string? Phone { get; set; }
 
-        [StringLength(100)]
-        public string? Department { get; set; }
+        public Guid? DepartmentId { get; set; }
 
         [StringLength(100)]
         public string? JobTitle { get; set; }

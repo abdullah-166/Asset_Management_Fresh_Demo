@@ -8,13 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="wwwroot\Pages\Account\Login.cshtml.cs" />
-    <Content Remove="wwwroot\Pages\Account\ResetPassword.cshtml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="wwwroot\Pages\Account\Login.cshtml.cs" />
-    <Compile Include="wwwroot\Pages\Account\ResetPassword.cshtml.cs" />
+    <Compile Remove="wwwroot\Pages\**" />
+    <Content Remove="wwwroot\Pages\**" />
+    <EmbeddedResource Remove="wwwroot\Pages\**" />
+    <None Remove="wwwroot\Pages\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -27,6 +24,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
     <PackageReference Include="PdfSharpCore" Version="1.3.67" />
     <PackageReference Include="QRCoder" Version="1.7.0" />
+    <PackageReference Include="QuestPDF" Version="2025.7.4" />
   </ItemGroup>
 
   <ItemGroup>
@@ -35,6 +33,7 @@
 
   <ItemGroup>
     <Folder Include="Areas\Identity\Data\" />
+    <Folder Include="wwwroot\qrcodes\" />
   </ItemGroup>
 
 </Project>

@@ -21,28 +21,27 @@ namespace FeroTech.Infrastructure.Repositories
 
         public async Task<DistributedAsset?> GetByIdAsync(Guid id)
         {
-            return await _context.DistributedAssets
-                .FirstOrDefaultAsync(d => d.DistributedAssetId == id);
+            return await _context.DistributedAssets.FindAsync(id);
         }
 
-        public async Task AddAsync(DistributedAsset distributedAsset)
+        public async Task AddAsync(DistributedAsset entity)
         {
-            _context.DistributedAssets.Add(distributedAsset);
+            await _context.DistributedAssets.AddAsync(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task UpdateAsync(DistributedAsset distributedAsset)
+        public async Task UpdateAsync(DistributedAsset entity)
         {
-            _context.DistributedAssets.Update(distributedAsset);
+            _context.DistributedAssets.Update(entity);
             await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var entity = await _context.DistributedAssets.FindAsync(id);
-            if (entity != null)
+            var item = await _context.DistributedAssets.FindAsync(id);
+            if (item != null)
             {
-                _context.DistributedAssets.Remove(entity);
+                _context.DistributedAssets.Remove(item);
                 await _context.SaveChangesAsync();
             }
         }

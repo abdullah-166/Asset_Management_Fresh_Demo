@@ -6,69 +6,74 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FeroTech.Web.Controllers{
+namespace FeroTech.Web.Controllers
+{
     [Authorize]
     public class AssetController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IAssetRepository _rep;
-        private readonly INotificationRepository _notificationRepo; // <-- 1. Add notification repo
+        private readonly INotificationRepository _notificationRepo;
+        private readonly ICategoryRepository _categoryRepo;
 
-        // 2. Inject notification repo in the constructor
-        public AssetController(ApplicationDbContext context, IAssetRepository rep, INotificationRepository notificationRepo)
+        public AssetController(
+            ApplicationDbContext context,
+            IAssetRepository rep,
+            INotificationRepository notificationRepo,
+            ICategoryRepository categoryRepo)
         {
             _context = context;
             _rep = rep;
-            _notificationRepo = notificationRepo; // <-- 3. Assign it
+            _notificationRepo = notificationRepo;
+            _categoryRepo = categoryRepo;
         }
 
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            ViewBag.CategoryList = await _categoryRepo.GetAllAsync();
+            return View(new AssetDto());
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(AssetDto model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                await _rep.Create(model);
-
-                // --- ADD NOTIFICATION ---
-                string assetName = $"{model.Brand} {model.Modell}";
-                await _notificationRepo.AddAsync(
-                    message: $"New asset '{assetName}' ({model.Quantity}x) was created.",
-                    module: "Asset",
-                    actionType: "Create"
-                );
-                // --------------------------
-
-                TempData["SuccessMessage"] = "Asset and QR Codes generated successfully!";
-                return RedirectToAction("Create");
+                ViewBag.CategoryList = await _categoryRepo.GetAllAsync();
+                return View(model);
             }
 
-            return View(model);
+            await _rep.Create(model);
+
+            await _notificationRepo.AddAsync(
+                message: $"New asset '{model.Brand} {model.Modell}' was created.",
+                module: "Asset",
+                actionType: "Create"
+            );
+
+            TempData["SuccessMessage"] = "Asset created successfully!";
+            return RedirectToAction("Index");
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var assets = await _context.Assets.Where(x => x.Status == "Available").ToListAsync();
-            return View(assets);
+            return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var assets = await _rep.GetAllAsync();
-            return Json(assets);
+            var data = await _context.Assets.ToListAsync();
+            return Json(new { data }); 
         }
 
         [HttpGet]
         public async Task<IActionResult> GetById(Guid id)
         {
             var asset = await _context.Assets.FindAsync(id);
+
             if (asset == null)
                 return Json(new { success = false, message = "Asset not found." });
 
@@ -79,6 +84,7 @@ namespace FeroTech.Web.Controllers{
         public async Task<IActionResult> Edit(Asset model)
         {
             var asset = await _context.Assets.FindAsync(model.AssetId);
+
             if (asset == null)
                 return Json(new { success = false, message = "Asset not found." });
 
@@ -92,14 +98,11 @@ namespace FeroTech.Web.Controllers{
             _context.Update(asset);
             await _context.SaveChangesAsync();
 
-            // --- ADD NOTIFICATION ---
-            string assetName = $"{asset.Brand} {asset.Modell}";
             await _notificationRepo.AddAsync(
-                message: $"Asset '{assetName}' was updated.",
+                message: $"Asset '{asset.Brand} {asset.Modell}' was updated.",
                 module: "Asset",
                 actionType: "Update"
             );
-            // --------------------------
 
             return Json(new { success = true, message = "Asset updated successfully!" });
         }
@@ -108,20 +111,18 @@ namespace FeroTech.Web.Controllers{
         public async Task<IActionResult> Delete(Guid id)
         {
             var asset = await _context.Assets.FindAsync(id);
+
             if (asset == null)
                 return Json(new { success = false, message = "Asset not found." });
 
             _context.Assets.Remove(asset);
             await _context.SaveChangesAsync();
 
-            // --- ADD NOTIFICATION ---
-            string assetName = $"{asset.Brand} {asset.Modell}";
             await _notificationRepo.AddAsync(
-                message: $"Asset '{assetName}' was deleted.",
+                message: $"Asset '{asset.Brand} {asset.Modell}' was deleted.",
                 module: "Asset",
                 actionType: "Delete"
             );
-            // --------------------------
 
             return Json(new { success = true, message = "Asset deleted successfully!" });
         }

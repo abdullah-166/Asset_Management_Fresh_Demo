@@ -1,68 +1,100 @@
 ﻿@model FeroTech.Infrastructure.Domain.Entities.DistributedAsset
+
 @{
-    ViewData["Title"] = "Assign Asset";
-    var assetList = ViewBag.AssetList as IEnumerable<FeroTech.Infrastructure.Domain.Entities.Asset>;
-    var employeeList = ViewBag.EmployeeList as IEnumerable<FeroTech.Infrastructure.Domain.Entities.Employee>;
+    var employees = ViewBag.EmployeeList as IEnumerable<FeroTech.Infrastructure.Application.DTOs.EmployeeDto>;
+    var categories = ViewBag.CategoryList as IEnumerable<FeroTech.Infrastructure.Application.DTOs.CategoryDto>;
 }
 
-<h2 class="mb-4">Assign Asset to Employee</h2>
+<h2>Assign New Asset</h2>
+<hr />
 
-<form asp-action="Create" method="post" class="p-4 border rounded shadow-sm bg-light">
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label class="form-label">Employee</label>
-            <select asp-for="EmployeeId" class="form-select" required>
+<form id="assignForm">
+    <div class="row">
+
+        <!-- Employee -->
+        <div class="col-md-6 mb-3">
+            <label>Employee</label>
+            <select asp-for="EmployeeId" id="EmployeeId" class="form-select">
                 <option value="">-- Select Employee --</option>
-                @foreach (var emp in employeeList)
+                @foreach (var emp in employees)
                 {
-                    <option value="@emp.EmployeeId">@emp.FullName — @emp.EmployeeId</option>
+                    <option value="@emp.EmployeeId">@emp.FullName (@emp.Phone)</option>
                 }
             </select>
-            <span asp-validation-for="EmployeeId" class="text-danger"></span>
         </div>
 
-        <div class="col-md-6">
-            <label class="form-label">Product</label>
-            <select asp-for="AssetId" class="form-select" required>
-                <option value="">-- Select Product --</option>
-                @foreach (var item in assetList)
+        <!-- Category -->
+        <div class="col-md-6 mb-3">
+            <label>Category</label>
+            <select asp-for="CategoryId" id="CategoryId" class="form-select">
+                <option value="">-- Select Category --</option>
+                @foreach (var cat in categories)
                 {
-                    <option value="@item.AssetId">@item.Brand @item.Modell</option>
+                    <option value="@cat.CategoryId">@cat.CategoryName</option>
                 }
             </select>
-            <span asp-validation-for="AssetId" class="text-danger"></span>
-        </div>
-    </div>
-
-    <div class="row mb-3">
-        <div class="col-md-6">
-            <label class="form-label">QR Code Value</label>
-            <input asp-for="QRCodeValue" class="form-control" placeholder="Enter QR Code Value" required />
-            <span asp-validation-for="QRCodeValue" class="text-danger"></span>
         </div>
 
-        <div class="col-md-3">
-            <label class="form-label">Assign Date</label>
-            <input asp-for="AssignedDate" type="date" class="form-control" required />
+        <!-- Asset -->
+        <div class="col-md-6 mb-3">
+            <label>Asset</label>
+            <select asp-for="AssetId" id="AssetId" class="form-select">
+                <option value="">-- Select Asset --</option>
+            </select>
         </div>
 
-        <div class="col-md-3">
-            <label class="form-label">End Date</label>
+        <!-- Assigned Date -->
+        <div class="col-md-6 mb-3">
+            <label>Assigned Date</label>
+            <input asp-for="AssignedDate" type="date" class="form-control" />
+        </div>
+
+        <!-- End Date -->
+        <div class="col-md-6 mb-3">
+            <label>End Date</label>
             <input asp-for="EndDate" type="date" class="form-control" />
         </div>
-    </div>
 
-    <div class="mb-3">
-        <label class="form-label">Notes</label>
-        <textarea asp-for="Notes" class="form-control" rows="2"></textarea>
-    </div>
+        <!-- Notes -->
+        <div class="col-md-12 mb-3">
+            <label>Notes</label>
+            <textarea asp-for="Notes" class="form-control"></textarea>
+        </div>
 
-    <div class="d-flex justify-content-between mt-4">
-        <a asp-action="Index" class="btn btn-secondary">Back</a>
-        <button type="submit" class="btn btn-success">Assign Asset</button>
+        <div class="col-md-12 text-end">
+            <button type="submit" class="btn btn-primary">Assign</button>
+        </div>
+
     </div>
 </form>
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+
+            $("#CategoryId").change(function () {
+                let id = $(this).val();
+                $("#AssetId").html("<option>Loading...</option>");
+
+                $.get("/DistributedAsset/GetAssetsByCategory", { categoryId: id }, function (data) {
+                    $("#AssetId").html('<option value="">-- Select Asset --</option>');
+                    data.forEach(x => $("#AssetId").append(`<option value="${x.assetId}">${x.name}</option>`));
+                });
+            });
+
+            $("#assignForm").submit(function (e) {
+                e.preventDefault();
+
+                $.post("/DistributedAsset/Create", $(this).serialize(), function (res) {
+                    if (res.success) {
+                        Swal.fire("Success", res.message, "success")
+                            .then(() => window.location.href = "/DistributedAsset/Index");
+                    } else {
+                        Swal.fire("Error", res.message, "error");
+                    }
+                });
+            });
+
+        });
+    </script>
 }

@@ -1,25 +1,24 @@
 ﻿@{
-    ViewData["Title"] = "Employee Details";
+    ViewData["Title"] = "Employee Management";
 }
 
-<h2>Employee Details</h2>
-<hr />
+<h2 class="mb-4">Employee List</h2>
 
-<div class="text-end mb-3">
-    <a href="@Url.Action("Create", "Employee")" class="btn btn-success">+ Add Employee</a>
+<div class="mb-3 text-end">
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="fa fa-plus"></i> Add Employee
+    </a>
 </div>
 
-<link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css" />
-
-<table id="employeeTable" class="display" style="width:100%">
-    <thead>
+<table id="employeeTable" class="table table-bordered table-striped w-100">
+    <thead class="table-dark">
         <tr>
             <th>Full Name</th>
             <th>Email</th>
             <th>Phone</th>
             <th>Department</th>
             <th>Job Title</th>
-            <th>Active</th>
+            <th>Status</th>
             <th>Actions</th>
         </tr>
     </thead>
@@ -32,49 +31,55 @@
 
     <script>
         $(document).ready(function () {
-            let table = new DataTable('#employeeTable', {
+            var table = $('#employeeTable').DataTable({
                 ajax: {
-                    url: '@Url.Action("GetAll", "Employee")',
+                    url: '/Employee/GetAll',
                     dataSrc: ''
                 },
                 columns: [
                     { data: 'fullName' },
                     { data: 'email' },
                     { data: 'phone' },
-                    { data: 'department' },
+                    { data: 'departmentName' },
                     { data: 'jobTitle' },
                     {
                         data: 'isActive',
                         render: function (data) {
-                            return data ? 'Yes' : 'No';
+                            return data
+                                ? '<span class="badge bg-success">Active</span>'
+                                : '<span class="badge bg-danger">Inactive</span>';
                         }
                     },
                     {
                         data: 'employeeId',
-                        render: function (data, type, row) {
+                        render: function (id) {
                             return `
-                                <button class="btn btn-sm btn-primary edit-btn" data-id="${data}">Edit</button>
-                                <button class="btn btn-sm btn-danger delete-btn" data-id="${data}">Delete</button>
-                            `;
+                                <a href="/Employee/Edit/${id}" class="btn btn-sm btn-warning me-1">
+                                    <i class="fa fa-edit"></i>
+                                </a>
+                                <button class="btn btn-sm btn-danger deleteBtn" data-id="${id}">
+                                    <i class="fa fa-trash"></i>
+                                </button>`;
                         }
                     }
                 ]
             });
 
-            // -------- DELETE EMPLOYEE --------
-            $('#employeeTable').on('click', '.delete-btn', function () {
-                const id = $(this).data('id');
+            $(document).on('click', '.deleteBtn', function () {
+                var id = $(this).data('id');
 
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "You want to delete this employee?",
+                    text: "You won't be able to revert this!",
                     icon: 'warning',
                     showCancelButton: true,
+                    confirmButtonColor: '#d33',
+                    cancelButtonColor: '#3085d6',
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
                         $.ajax({
-                            url: '@Url.Action("Delete", "Employee")',
+                            url: '/Employee/Delete',
                             type: 'POST',
                             data: { id: id },
                             success: function (response) {
@@ -89,64 +94,6 @@
                                 Swal.fire('Error!', 'Something went wrong.', 'error');
                             }
                         });
-                    }
-                });
-            });
-
-            // -------- EDIT EMPLOYEE --------
-            $('#employeeTable').on('click', '.edit-btn', function () {
-                const id = $(this).data('id');
-
-                $.ajax({
-                    url: '@Url.Action("GetById", "Employee")',
-                    type: 'GET',
-                    data: { id: id },
-                    success: function (response) {
-                        if (response.success) {
-                            const emp = response.data;
-                            Swal.fire({
-                                title: 'Edit Employee',
-                                html: `
-                                    <input id="fullName" class="swal2-input" value="${emp.fullName}" placeholder="Full Name">
-                                    <input id="email" class="swal2-input" value="${emp.email}" placeholder="Email">
-                                    <input id="phone" class="swal2-input" value="${emp.phone}" placeholder="Phone">
-                                    <input id="department" class="swal2-input" value="${emp.department}" placeholder="Department">
-                                    <input id="jobTitle" class="swal2-input" value="${emp.jobTitle}" placeholder="Job Title">
-                                    <label><input type="checkbox" id="isActive" ${emp.isActive ? 'checked' : ''}/> Active</label>
-                                `,
-                                showCancelButton: true,
-                                confirmButtonText: 'Save'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $.ajax({
-                                        url: '@Url.Action("Edit", "Employee")',
-                                        type: 'POST',
-                                        data: {
-                                            EmployeeId: emp.employeeId,
-                                            FullName: $('#fullName').val(),
-                                            Email: $('#email').val(),
-                                            Phone: $('#phone').val(),
-                                            Department: $('#department').val(),
-                                            JobTitle: $('#jobTitle').val(),
-                                            IsActive: $('#isActive').is(':checked')
-                                        },
-                                        success: function (res) {
-                                            if (res.success) {
-                                                Swal.fire('Updated!', res.message, 'success');
-                                                table.ajax.reload();
-                                            } else {
-                                                Swal.fire('Error!', res.message, 'error');
-                                            }
-                                        },
-                                        error: function () {
-                                            Swal.fire('Error!', 'Something went wrong.', 'error');
-                                        }
-                                    });
-                                }
-                            });
-                        } else {
-                            Swal.fire('Error!', response.message, 'error');
-                        }
                     }
                 });
             });

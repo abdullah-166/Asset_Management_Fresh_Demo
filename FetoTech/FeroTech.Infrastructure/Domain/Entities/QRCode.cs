@@ -8,7 +8,7 @@ namespace FeroTech.Infrastructure.Domain.Entities
         [Key]
         public Guid QRCodeId { get; set; }
 
-        public Guid AssetId { get; set; }  // logical link
+        public Guid AssetId { get; set; }  
 
         [StringLength(128)]
         public string? QRCodeValue { get; set; }

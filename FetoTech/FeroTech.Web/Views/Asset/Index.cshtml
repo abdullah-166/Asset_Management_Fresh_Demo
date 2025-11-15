@@ -35,10 +35,11 @@
 
     <script>
         $(document).ready(function () {
+
             let table = new DataTable('#assetTable', {
                 ajax: {
                     url: '@Url.Action("GetAll", "Asset")',
-                    dataSrc: ''
+                    dataSrc: 'data'
                 },
                 columns: [
                     { data: 'category' },
@@ -46,33 +47,25 @@
                     { data: 'modell' },
                     {
                         data: 'purchaseDate',
-                        render: function (data) {
-                            return data ? new Date(data).toLocaleDateString() : '-';
-                        }
+                        render: d => d ? new Date(d).toLocaleDateString() : '-'
                     },
                     {
                         data: 'purchasePrice',
-                        render: function (data) {
-                            return data ? `$${data.toFixed(2)}` : '-';
-                        }
+                        render: d => d ? `$${d.toFixed(2)}` : '-'
                     },
                     {
                         data: 'warrantyEndDate',
-                        render: function (data) {
-                            return data ? new Date(data).toLocaleDateString() : '-';
-                        }
+                        render: d => d ? new Date(d).toLocaleDateString() : '-'
                     },
                     { data: 'status' },
                     { data: 'quantity' },
                     {
                         data: 'isActive',
-                        render: function (data) {
-                            return data ? 'Yes' : 'No';
-                        }
+                        render: d => d ? 'Yes' : 'No'
                     },
                     {
                         data: 'assetId',
-                        render: function (data, type, row) {
+                        render: function (data) {
                             return `
                                 <button class="btn btn-sm btn-primary edit-btn" data-id="${data}">Edit</button>
                                 <button class="btn btn-sm btn-danger delete-btn" data-id="${data}">Delete</button>
@@ -82,95 +75,85 @@
                 ]
             });
 
-            // -------- DELETE ASSET --------
+            // ---------------- DELETE ----------------
             $('#assetTable').on('click', '.delete-btn', function () {
                 const id = $(this).data('id');
 
                 Swal.fire({
                     title: 'Are you sure?',
-                    text: "You want to delete this asset?",
+                    text: "Delete this asset?",
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonText: 'Yes, delete it!'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        $.ajax({
-                            url: '@Url.Action("Delete", "Asset")',
-                            type: 'POST',
-                            data: { id: id },
-                            success: function (response) {
-                                if (response.success) {
-                                    Swal.fire('Deleted!', response.message, 'success');
-                                    table.ajax.reload();
-                                } else {
-                                    Swal.fire('Error!', response.message, 'error');
-                                }
-                            },
-                            error: function () {
-                                Swal.fire('Error!', 'Something went wrong.', 'error');
+
+                        $.post('@Url.Action("Delete", "Asset")', { id: id }, function (res) {
+                            if (res.success) {
+                                Swal.fire('Deleted!', res.message, 'success');
+                                table.ajax.reload();
+                            } else {
+                                Swal.fire('Error!', res.message, 'error');
                             }
                         });
+
                     }
                 });
             });
 
-            // -------- EDIT ASSET --------
+            // ---------------- EDIT ----------------
             $('#assetTable').on('click', '.edit-btn', function () {
                 const id = $(this).data('id');
 
-                $.ajax({
-                    url: '@Url.Action("GetById", "Asset")',
-                    type: 'GET',
-                    data: { id: id },
-                    success: function (response) {
-                        if (response.success) {
-                            const a = response.data;
-                            Swal.fire({
-                                title: 'Edit Asset',
-                                html: `
-                                    <input id="category" class="swal2-input" value="${a.category}" placeholder="Category">
-                                    <input id="brand" class="swal2-input" value="${a.brand}" placeholder="Brand">
-                                    <input id="modell" class="swal2-input" value="${a.modell}" placeholder="Model">
-                                    <input id="purchasePrice" type="number" class="swal2-input" value="${a.purchasePrice || ''}" placeholder="Price">
-                                    <input id="quantity" type="number" class="swal2-input" value="${a.quantity}" placeholder="Quantity">
-                                    <label><input type="checkbox" id="isActive" ${a.isActive ? 'checked' : ''}/> Active</label>
-                                `,
-                                showCancelButton: true,
-                                confirmButtonText: 'Save'
-                            }).then((result) => {
-                                if (result.isConfirmed) {
-                                    $.ajax({
-                                        url: '@Url.Action("Edit", "Asset")',
-                                        type: 'POST',
-                                        data: {
-                                            AssetId: a.assetId,
-                                            Category: $('#category').val(),
-                                            Brand: $('#brand').val(),
-                                            Modell: $('#modell').val(),
-                                            PurchasePrice: $('#purchasePrice').val(),
-                                            Quantity: $('#quantity').val(),
-                                            IsActive: $('#isActive').is(':checked')
-                                        },
-                                        success: function (res) {
-                                            if (res.success) {
-                                                Swal.fire('Updated!', res.message, 'success');
-                                                table.ajax.reload();
-                                            } else {
-                                                Swal.fire('Error!', res.message, 'error');
-                                            }
-                                        },
-                                        error: function () {
-                                            Swal.fire('Error!', 'Something went wrong.', 'error');
-                                        }
-                                    });
-                                }
-                            });
-                        } else {
-                            Swal.fire('Error!', response.message, 'error');
-                        }
+                $.get('@Url.Action("GetById", "Asset")', { id: id }, function (response) {
+
+                    if (!response.success) {
+                        Swal.fire('Error!', response.message, 'error');
+                        return;
                     }
+
+                    const a = response.data;
+
+                    Swal.fire({
+                        title: 'Edit Asset',
+                        html: `
+                            <input id="category" class="swal2-input" value="${a.category}" placeholder="Category">
+                            <input id="brand" class="swal2-input" value="${a.brand}" placeholder="Brand">
+                            <input id="modell" class="swal2-input" value="${a.modell}" placeholder="Model">
+                            <input id="price" type="number" class="swal2-input" value="${a.purchasePrice || ''}" placeholder="Price">
+                            <input id="qty" type="number" class="swal2-input" value="${a.quantity}" placeholder="Quantity">
+                            <label><input type="checkbox" id="active" ${a.isActive ? 'checked' : ''}/> Active</label>
+                        `,
+                        showCancelButton: true,
+                        confirmButtonText: 'Save'
+                    }).then(result => {
+
+                        if (result.isConfirmed) {
+
+                            $.post('@Url.Action("Edit", "Asset")',
+                                {
+                                    AssetId: a.assetId,
+                                    Category: $('#category').val(),
+                                    Brand: $('#brand').val(),
+                                    Modell: $('#modell').val(),
+                                    PurchasePrice: $('#price').val(),
+                                    Quantity: $('#qty').val(),
+                                    IsActive: $('#active').is(':checked')
+                                },
+                                res => {
+                                    if (res.success) {
+                                        Swal.fire('Updated!', res.message, 'success');
+                                        table.ajax.reload();
+                                    } else {
+                                        Swal.fire('Error!', res.message, 'error');
+                                    }
+                                }
+                            );
+                        }
+                    });
                 });
             });
+
         });
     </script>
 }
